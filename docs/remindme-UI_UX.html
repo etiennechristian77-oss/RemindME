@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RemindME — UI Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F6FA; --surface:#FFFFFF; --ink:#1B2333; --ink-soft:#5B6478;
+    --primary:#2C4A7C; --primary-soft:#E7ECF5; --amber:#F0A335; --amber-soft:#FCEBD2;
+    --green:#3CA88A; --green-soft:#DFF2EC; --line:#E3E6EE;
+    box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Inter',sans-serif;
+    padding:40px 24px 60px;
+  }
+  h1{font-family:'Space Grotesk',sans-serif; font-size:1.6rem; margin:0 0 4px;}
+  .lede{color:var(--ink-soft); margin:0 0 32px; font-size:.95rem; max-width:60ch;}
+  .gallery{
+    display:flex; gap:28px; overflow-x:auto; padding-bottom:24px;
+    scroll-snap-type:x proximity;
+  }
+  .gallery::-webkit-scrollbar{height:8px;}
+  .gallery::-webkit-scrollbar-thumb{background:var(--line); border-radius:8px;}
+  figure{margin:0; flex:0 0 auto; scroll-snap-align:start; text-align:center;}
+  figcaption{font-family:'Space Grotesk',sans-serif; font-weight:700; margin-top:14px; font-size:.9rem; color:var(--ink);}
+  .phone{
+    width:300px; height:632px; background:var(--surface);
+    border-radius:34px; border:6px solid var(--ink);
+    box-shadow:0 18px 40px rgba(27,35,51,.15);
+    overflow:hidden; position:relative; display:flex; flex-direction:column;
+  }
+  .statusbar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 22px 4px; font-size:.72rem; font-weight:600; color:var(--ink);
+  }
+  .screen{flex:1; display:flex; flex-direction:column; min-height:0;}
+  .content{flex:1; overflow-y:auto; padding:6px 20px 12px;}
+
+  /* shared bits */
+  .icon{width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; flex:0 0 auto;}
+  .navbar{
+    display:flex; justify-content:space-around; align-items:center;
+    padding:12px 0 16px; border-top:1px solid var(--line); background:var(--surface);
+  }
+  .navitem{display:flex; flex-direction:column; align-items:center; gap:4px; font-size:.65rem; color:var(--ink-soft); font-weight:600;}
+  .navitem.active{color:var(--primary);}
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:18px;
+    padding:14px 16px; margin-bottom:12px; display:flex; gap:12px; align-items:flex-start;
+  }
+  .badge{
+    width:34px; height:34px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex:0 0 auto;
+  }
+  .badge.amber{background:var(--amber-soft); color:#96650E;}
+  .badge.primary{background:var(--primary-soft); color:var(--primary);}
+  .badge.green{background:var(--green-soft); color:#1F6E58;}
+  .r-title{font-weight:600; font-size:.9rem; margin:0 0 2px;}
+  .r-meta{font-size:.75rem; color:var(--ink-soft); margin:0;}
+  .section-label{font-size:.72rem; font-weight:700; color:var(--ink-soft); text-transform:none; letter-spacing:.02em; margin:14px 0 8px;}
+  .section-label:first-child{margin-top:4px;}
+  .btn-primary{
+    background:var(--primary); color:#fff; border:none; border-radius:16px;
+    padding:15px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.95rem;
+    width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+
+  /* HOME */
+  .greet{padding:10px 2px 4px;}
+  .greet .hi{font-size:.85rem; color:var(--ink-soft); margin:0;}
+  .greet h2{font-family:'Space Grotesk',sans-serif; margin:2px 0 18px; font-size:1.35rem;}
+  .fab-row{padding:2px 0 18px;}
+
+  /* CREATE */
+  .field-label{font-size:.72rem; font-weight:700; color:var(--ink-soft); margin:16px 0 6px;}
+  .field-label:first-child{margin-top:4px;}
+  .input{
+    width:100%; border:1px solid var(--line); border-radius:14px; padding:13px 14px;
+    font-family:'Inter',sans-serif; font-size:.95rem; color:var(--ink); background:var(--surface);
+  }
+  .row-2{display:flex; gap:10px;}
+  .row-2 .input{flex:1;}
+  .chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .chip{
+    border:1.5px solid var(--line); border-radius:12px; padding:10px 12px; font-size:.82rem; font-weight:600;
+    display:flex; align-items:center; gap:7px; color:var(--ink-soft);
+  }
+  .chip.selected{border-color:var(--primary); background:var(--primary-soft); color:var(--primary);}
+
+  /* INCOMING CALL */
+  .call-screen{background:linear-gradient(180deg,#1B2333,#28344A); color:#fff; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:44px 26px 30px; text-align:center;}
+  .call-tag{font-size:.75rem; letter-spacing:.03em; color:#AFC0DD; margin:0;}
+  .ring{
+    width:104px; height:104px; border-radius:50%; background:rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content:center; margin:18px auto;
+    border:1.5px solid rgba(255,255,255,.2);
+  }
+  .ring .icon{width:40px; height:40px; color:var(--amber);}
+  .call-title{font-family:'Space Grotesk',sans-serif; font-size:1.15rem; margin:6px 0 10px;}
+  .call-msg{font-size:.95rem; color:#DCE3F0; line-height:1.5; margin:0;}
+  .wave{display:flex; gap:4px; align-items:flex-end; height:22px; margin:22px 0;}
+  .wave span{width:3px; background:var(--amber); border-radius:2px; animation:none;}
+  .call-actions{display:flex; gap:26px;}
+  .call-btn{
+    width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    border:none; color:#fff;
+  }
+  .call-btn.decline{background:#D96A5C;}
+  .call-btn.answer{background:var(--green);}
+  .call-btn .icon{width:24px; height:24px;}
+
+  /* SETTINGS */
+  .set-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:14px 2px; border-bottom:1px solid var(--line);
+  }
+  .set-left{display:flex; align-items:center; gap:12px;}
+  .set-icon{width:32px; height:32px; border-radius:10px; background:var(--primary-soft); color:var(--primary); display:flex; align-items:center; justify-content:center;}
+  .set-title{font-size:.88rem; font-weight:600; margin:0;}
+  .set-sub{font-size:.72rem; color:var(--ink-soft); margin:0;}
+  .switch{width:38px; height:22px; border-radius:11px; background:var(--primary); position:relative; flex:0 0 auto;}
+  .switch::after{content:'';position:absolute; top:3px; right:3px; width:16px; height:16px; border-radius:50%; background:#fff;}
+  .switch.off{background:var(--line);}
+  .switch.off::after{left:3px; right:auto;}
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12151C; --surface:#1B2029; --ink:#F1F3F7; --ink-soft:#9AA3B5;
+      --primary-soft:#232C42; --amber-soft:#3A2E17; --green-soft:#173229; --line:#2A2F3B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12151C; --surface:#1B2029; --ink:#F1F3F7; --ink-soft:#9AA3B5;
+    --primary-soft:#232C42; --amber-soft:#3A2E17; --green-soft:#173229; --line:#2A2F3B;
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M9.5 20a2.5 2.5 0 0 0 5 0"/></symbol>
+  <symbol id="i-msg" viewBox="0 0 24 24"><path d="M4 5h16v11H8l-4 4V5Z"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6 3h3l2 5-2.5 1.5a11 11 0 0 0 5 5L15 12l5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 4 5a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h5v-5h2v5h5v-9"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.2-1.6l2-1.6-2-3.4-2.4.6a7 7 0 0 0-2.8-1.6L13 2h-4l-.6 2.4A7 7 0 0 0 5.6 6L3.2 5.4l-2 3.4 2 1.6a7 7 0 0 0 0 3.2l-2 1.6 2 3.4 2.4-.6a7 7 0 0 0 2.8 1.6L9 22h4l.6-2.4a7 7 0 0 0 2.8-1.6l2.4.6 2-3.4-2-1.6c.13-.5.2-1 .2-1.6Z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-voice" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+  <symbol id="i-sim" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></symbol>
+</svg>
+
+<h1>RemindME — UI Design</h1>
+<p class="lede">Five core screens for a reminder app that alerts by notification, text, or a spoken in-app call. Home puts a single, obvious action — add a reminder — within one tap; everything else follows the same card and nav language.</p>
+
+<div class="gallery">
+
+  <!-- HOME -->
+  <figure>
+    <div class="phone"><div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="screen"><div class="content">
+        <div class="greet"><p class="hi">Good morning</p><h2>Today, Sep 26</h2></div>
+        <button class="btn-primary" style="margin-bottom:20px;"><svg class="icon"><use href="#i-plus"/></svg>New reminder</button>
+        <p class="section-label">Today</p>
+        <div class="card"><div class="badge amber"><svg class="icon"><use href="#i-bell"/></svg></div>
+          <div><p class="r-title">Call mom</p><p class="r-meta">2:00 PM · Notification</p></div></div>
+        <div class="card"><div class="badge primary"><svg class="icon"><use href="#i-msg"/></svg></div>
+          <div><p class="r-title">Pay electricity bill</p><p class="r-meta">6:30 PM · SMS</p></div></div>
+        <div class="card"><div class="badge green"><svg class="icon"><use href="#i-phone"/></svg></div>
+          <div><p class="r-title">Take medicine</p><p class="r-meta">9:00 PM · In-app call</p></div></div>
+      </div>
+      <div class="navbar">
+        <div class="navitem active"><svg class="icon"><use href="#i-home"/></svg>Home</div>
+        <div class="navitem"><svg class="icon"><use href="#i-list"/></svg>Upcoming</div>
+        <div class="navitem"><svg class="icon"><use href="#i-gear"/></svg>Settings</div>
+      </div></div>
+    </div>
+    <figcaption>Home</figcaption>
+  </figure>
+
+  <!-- CREATE -->
+  <figure>
+    <div class="phone"><div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="screen"><div class="content">
+        <p class="section-label" style="margin-top:10px;">New reminder</p>
+        <input class="input" placeholder="What do you need to remember?" style="font-size:1rem; padding:15px;">
+        <p class="field-label">When</p>
+        <div class="row-2">
+          <div class="input" style="display:flex; align-items:center; gap:8px; color:var(--ink-soft);"><svg class="icon"><use href="#i-cal"/></svg>Today</div>
+          <div class="input" style="display:flex; align-items:center; gap:8px; color:var(--ink-soft);"><svg class="icon"><use href="#i-clock"/></svg>2:00 PM</div>
+        </div>
+        <p class="field-label">Remind me by</p>
+        <div class="chips">
+          <div class="chip selected"><svg class="icon"><use href="#i-bell"/></svg>Notification</div>
+          <div class="chip"><svg class="icon"><use href="#i-msg"/></svg>SMS</div>
+          <div class="chip"><svg class="icon"><use href="#i-phone"/></svg>Call</div>
+        </div>
+      </div>
+      <div style="padding:14px 20px 22px; border-top:1px solid var(--line);">
+        <button class="btn-primary">Save reminder</button>
+      </div></div>
+    </div>
+    <figcaption>Create Reminder</figcaption>
+  </figure>
+
+  <!-- UPCOMING -->
+  <figure>
+    <div class="phone"><div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="screen"><div class="content">
+        <p class="section-label" style="margin-top:10px; font-size:1.05rem; font-family:'Space Grotesk',sans-serif; color:var(--ink);">Upcoming</p>
+        <p class="section-label">Today</p>
+        <div class="card"><div class="badge amber"><svg class="icon"><use href="#i-bell"/></svg></div>
+          <div><p class="r-title">Call mom</p><p class="r-meta">2:00 PM · Notification</p></div></div>
+        <div class="card"><div class="badge green"><svg class="icon"><use href="#i-phone"/></svg></div>
+          <div><p class="r-title">Take medicine</p><p class="r-meta">9:00 PM · In-app call</p></div></div>
+        <p class="section-label">Tomorrow</p>
+        <div class="card"><div class="badge primary"><svg class="icon"><use href="#i-msg"/></svg></div>
+          <div><p class="r-title">Team standup</p><p class="r-meta">9:30 AM · SMS</p></div></div>
+        <p class="section-label">This week</p>
+        <div class="card"><div class="badge amber"><svg class="icon"><use href="#i-bell"/></svg></div>
+          <div><p class="r-title">Dentist appointment</p><p class="r-meta">Thu · 11:00 AM</p></div></div>
+      </div>
+      <div class="navbar">
+        <div class="navitem"><svg class="icon"><use href="#i-home"/></svg>Home</div>
+        <div class="navitem active"><svg class="icon"><use href="#i-list"/></svg>Upcoming</div>
+        <div class="navitem"><svg class="icon"><use href="#i-gear"/></svg>Settings</div>
+      </div></div>
+    </div>
+    <figcaption>Upcoming Reminders</figcaption>
+  </figure>
+
+  <!-- INCOMING CALL -->
+  <figure>
+    <div class="phone"><div class="call-screen">
+        <p class="call-tag">RemindME is calling</p>
+        <div>
+          <div class="ring"><svg class="icon"><use href="#i-bell"/></svg></div>
+          <h3 class="call-title">Take medicine</h3>
+          <p class="call-msg">"Time to take your evening medicine — one tablet after dinner."</p>
+          <div class="wave">
+            <span style="height:8px"></span><span style="height:16px"></span><span style="height:22px"></span>
+            <span style="height:12px"></span><span style="height:20px"></span><span style="height:10px"></span>
+          </div>
+        </div>
+        <div class="call-actions">
+          <button class="call-btn decline"><svg class="icon"><use href="#i-x"/></svg></button>
+          <button class="call-btn answer"><svg class="icon"><use href="#i-phone"/></svg></button>
+        </div>
+    </div></div>
+    <figcaption>Incoming Reminder Call</figcaption>
+  </figure>
+
+  <!-- SETTINGS -->
+  <figure>
+    <div class="phone"><div class="statusbar"><span>9:41</span><span>●●●</span></div>
+      <div class="screen"><div class="content">
+        <p class="section-label" style="margin-top:10px; font-size:1.05rem; font-family:'Space Grotesk',sans-serif; color:var(--ink);">Settings</p>
+        <div class="set-row"><div class="set-left"><div class="set-icon"><svg class="icon" style="width:18px;height:18px"><use href="#i-user"/></svg></div><div><p class="set-title">Account</p><p class="set-sub">Alex Rivera</p></div></div></div>
+        <div class="set-row"><div class="set-left"><div class="set-icon"><svg class="icon" style="width:18px;height:18px"><use href="#i-bell"/></svg></div><div><p class="set-title">Notifications</p><p class="set-sub">On for all reminders</p></div></div><div class="switch"></div></div>
+        <div class="set-row"><div class="set-left"><div class="set-icon"><svg class="icon" style="width:18px;height:18px"><use href="#i-sim"/></svg></div><div><p class="set-title">SMS number</p><p class="set-sub">+1 (555) 010-2938</p></div></div></div>
+        <div class="set-row"><div class="set-left"><div class="set-icon"><svg class="icon" style="width:18px;height:18px"><use href="#i-phone"/></svg></div><div><p class="set-title">In-app call alerts</p><p class="set-sub">For high-priority reminders</p></div></div><div class="switch"></div></div>
+        <div class="set-row"><div class="set-left"><div class="set-icon"><svg class="icon" style="width:18px;height:18px"><use href="#i-voice"/></svg></div><div><p class="set-title">Voice</p><p class="set-sub">Calm — Female</p></div></div></div>
+        <div class="set-row" style="border-bottom:none;"><div class="set-left"><div class="set-icon"><svg class="icon" style="width:18px;height:18px"><use href="#i-check"/></svg></div><div><p class="set-title">Default snooze</p><p class="set-sub">10 minutes</p></div></div></div>
+      </div>
+      <div class="navbar">
+        <div class="navitem"><svg class="icon"><use href="#i-home"/></svg>Home</div>
+        <div class="navitem"><svg class="icon"><use href="#i-list"/></svg>Upcoming</div>
+        <div class="navitem active"><svg class="icon"><use href="#i-gear"/></svg>Settings</div>
+      </div></div>
+    </div>
+    <figcaption>Settings</figcaption>
+  </figure>
+
+</div>
+</body>
+</html>
